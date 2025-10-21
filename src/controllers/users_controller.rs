@@ -6,7 +6,8 @@ use crate::utils::hash::hash_password;
 
 // ===================== INIT DATABASE =====================
 pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
-    let database_url = "C:\\Users\\1\\Documents\\GitHub\\PassMenSystem\\src\\passwords_management_system.db";
+    // let database_url = "C:\\Users\\1\\Documents\\GitHub\\PassMenSystem\\src\\passwords_management_system.db";
+    let database_url = "sqlite://src/passwords_management_system.db";
     let pool = SqlitePool::connect(database_url).await?;
 
     println!("Creating users table if not exists...");
@@ -23,6 +24,7 @@ pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             last_login TIMESTAMP,
             is_active BOOLEAN DEFAULT 1
+            
         );
         "#,
     )
