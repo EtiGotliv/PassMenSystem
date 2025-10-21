@@ -1,0 +1,9 @@
+C:\Users\USER\שלי\לימודים\בראשיתה\Rust\Project\passwords_management_system\target\debug\deps\derive_more-e603b7bb732913c2.d: C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\lib.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\as.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\vendor\mod.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\vendor\thiserror\mod.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\vendor\thiserror\aserror.rs
+
+C:\Users\USER\שלי\לימודים\בראשיתה\Rust\Project\passwords_management_system\target\debug\deps\libderive_more-e603b7bb732913c2.rmeta: C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\lib.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\as.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\vendor\mod.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\vendor\thiserror\mod.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\vendor\thiserror\aserror.rs
+
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\lib.rs:
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\as.rs:
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\vendor\mod.rs:
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\vendor\thiserror\mod.rs:
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-2.0.1\src\vendor\thiserror\aserror.rs:

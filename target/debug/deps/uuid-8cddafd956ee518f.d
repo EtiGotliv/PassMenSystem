@@ -1,0 +1,13 @@
+C:\Users\USER\שלי\לימודים\בראשיתה\Rust\Project\passwords_management_system\target\debug\deps\uuid-8cddafd956ee518f.d: C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\lib.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\macros.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\builder.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\error.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\non_nil.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\parser.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\fmt.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\timestamp.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\external.rs
+
+C:\Users\USER\שלי\לימודים\בראשיתה\Rust\Project\passwords_management_system\target\debug\deps\libuuid-8cddafd956ee518f.rmeta: C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\lib.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\macros.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\builder.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\error.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\non_nil.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\parser.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\fmt.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\timestamp.rs C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\external.rs
+
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\lib.rs:
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\macros.rs:
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\builder.rs:
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\error.rs:
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\non_nil.rs:
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\parser.rs:
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\fmt.rs:
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\timestamp.rs:
+C:\Users\USER\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\uuid-1.18.1\src\external.rs:
