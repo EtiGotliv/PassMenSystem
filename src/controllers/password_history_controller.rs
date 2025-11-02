@@ -27,20 +27,6 @@ pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
     Ok(pool)
 }
 
-        domain TEXT NOT NULL,
-        password_encrypted TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE
-        );
-        "#,
-    )
-    .execute(&pool)
-    .await?;
-    println!("passwords history table ready");
-    Ok(pool)
-}
-
 // ===================== CREATE PASSWORD HISTORY =====================
 #[post("/password-history")]
 pub async fn create_password_history(pool: web::Data<SqlitePool>, ph: web::Json<CreatePasswordHistoryDto>) -> impl Responder {
