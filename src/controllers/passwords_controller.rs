@@ -9,7 +9,7 @@ pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
     let database_url = "sqlite://src/passwords_management_system.db";
     let pool = SqlitePool::connect(database_url).await?;
 
-    println!("Creating users table if not exists...");
+    println!("Creating passwords table if not exists...");
     sqlx::query(
         r#"
         CREATE TABLE passwords (
@@ -25,7 +25,7 @@ pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
     )
     .execute(&pool)
     .await?;
-    println!("users table ready");
+    println!("passwords table ready");
     Ok(pool)
 }
 
