@@ -2,11 +2,10 @@ use chrono::{NaiveDateTime, Utc};
 use actix_web::{get, post, put, delete, web, HttpResponse, Responder};
 use sqlx::{SqlitePool, Row};
 use crate::models::users::{User, CreateUserDto, UpdateUserDto};
-use crate::utils::hash::hash_password;
+use crate::utils::hash::{verify_password, hash_password};
 
 // ===================== INIT DATABASE =====================
 pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
-    // let database_url = "C:\\Users\\1\\Documents\\GitHub\\PassMenSystem\\src\\passwords_management_system.db";
     let database_url = "sqlite://src/passwords_management_system.db";
     let pool = SqlitePool::connect(database_url).await?;
 
@@ -24,7 +23,6 @@ pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             last_login TIMESTAMP,
             is_active BOOLEAN DEFAULT 1
-            
         );
         "#,
     )
@@ -39,6 +37,12 @@ pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
 pub async fn create_user(pool: web::Data<SqlitePool>, user: web::Json<CreateUserDto>) -> impl Responder {
     let now: NaiveDateTime = Utc::now().naive_utc();
 
+    // הוספת האשינג של הסיסמה
+    let password_hash = match hash_password(&user.password_hash_to_login) {
+        Ok(hash) => hash,
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Hashing error: {}", e)),
+    };
+
     match sqlx::query(
         "INSERT INTO users (user_first_name, user_last_name, email, phone, password_hash_to_login, created_at, updated_at, last_login, is_active)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)"
@@ -47,7 +51,7 @@ pub async fn create_user(pool: web::Data<SqlitePool>, user: web::Json<CreateUser
     .bind(&user.user_last_name)
     .bind(&user.email)
     .bind(&user.phone)
-    .bind(&user.password_hash_to_login)
+    .bind(&password_hash) // כאן השתמשנו בהאש
     .bind(now)
     .bind(now)
     .bind(now)
@@ -61,7 +65,7 @@ pub async fn create_user(pool: web::Data<SqlitePool>, user: web::Json<CreateUser
                 user_last_name: user.user_last_name.clone(),
                 email: user.email.clone(),
                 phone: user.phone.clone().unwrap_or_default(),
-                password_hash_to_login: user.password_hash_to_login.clone(),
+                password_hash_to_login: password_hash,
                 created_at: now,
                 updated_at: now,
                 last_login: Some(now),
@@ -195,5 +199,34 @@ pub async fn delete_user(pool: web::Data<SqlitePool>, path: web::Path<i64>) -> i
             }
         }
         Err(e) => HttpResponse::InternalServerError().body(format!("Database error: {}", e)),
+    }
+}
+
+// ===================== LOGIN =====================
+#[derive(serde::Deserialize)]
+pub struct LoginRequest {
+    pub email: String,
+    pub password: String,
+}
+
+#[post("/login")]
+pub async fn login(pool: web::Data<SqlitePool>, creds: web::Json<LoginRequest>) -> impl Responder {
+    let row = match sqlx::query("SELECT * FROM users WHERE email = ?")
+        .bind(&creds.email)
+        .fetch_optional(&**pool)
+        .await
+    {
+        Ok(Some(row)) => row,
+        Ok(None) => return HttpResponse::Unauthorized().body("User not found"),
+        Err(e) => return HttpResponse::InternalServerError().body(format!("DB error: {}", e)),
+    };
+
+    let stored_hash: String = row.get("password_hash_to_login");
+
+    // השוואת הסיסמה שהוזנה להאש
+    match verify_password(&creds.password, &stored_hash) {
+        Ok(true) => HttpResponse::Ok().body("Login successful"),
+        Ok(false) => HttpResponse::Unauthorized().body("Invalid credentials"),
+        Err(e) => HttpResponse::InternalServerError().body(format!("Hashing error: {}", e)),
     }
 }

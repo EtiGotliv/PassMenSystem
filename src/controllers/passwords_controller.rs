@@ -2,10 +2,10 @@ use chrono::{NaiveDateTime, Utc};
 use actix_web::{get, post, put, delete, web, HttpResponse, Responder};
 use sqlx::{SqlitePool, Row};
 use crate::models::passwords::{Password, CreatePasswordDto, UpdatePasswordDto};
+use crate::utils::encryption::{encrypt_password, decrypt_password};
 
 // ===================== INIT DATABASE =====================
 pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
-    // let database_url = "C:\\Users\\1\\Documents\\GitHub\\PassMenSystem\\src\\passwords_management_system.db";
     let database_url = "sqlite://src/passwords_management_system.db";
     let pool = SqlitePool::connect(database_url).await?;
 
@@ -34,13 +34,19 @@ pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
 pub async fn create_password(pool: web::Data<SqlitePool>, password: web::Json<CreatePasswordDto>) -> impl Responder {
     let now = Utc::now().naive_utc();
 
+    // הצפנת הסיסמה לפני השמירה
+    let encrypted = match encrypt_password(&password.password_encrypted) {
+        Ok(enc) => enc,
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Encryption error: {}", e)),
+    };
+
     match sqlx::query(
         "INSERT INTO passwords (user_id, domain, password_encrypted, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?)"
     )
     .bind(password.user_id)
     .bind(&password.domain)
-    .bind(&password.password_encrypted)
+    .bind(&encrypted) // שומר מוצפן
     .bind(now)
     .bind(now)
     .execute(&**pool)
@@ -51,7 +57,7 @@ pub async fn create_password(pool: web::Data<SqlitePool>, password: web::Json<Cr
                 password_id: result.last_insert_rowid(),
                 user_id: password.user_id,
                 domain: password.domain.clone(),
-                password_encrypted: password.password_encrypted.clone(),
+                password_encrypted: password.password_encrypted.clone(), // מחזיר למשתמש מפורש
                 created_at: now,
                 updated_at: now,
             };
@@ -69,13 +75,17 @@ pub async fn get_passwords(pool: web::Data<SqlitePool>) -> impl Responder {
         .await
     {
         Ok(rows) => {
-            let passwords: Vec<Password> = rows.iter().map(|row| Password {
-                password_id: row.get("password_id"),
-                user_id: row.get("user_id"),
-                domain: row.get("domain"),
-                password_encrypted: row.get("password_encrypted"),
-                created_at: row.get::<NaiveDateTime,_>("created_at"),
-                updated_at: row.get::<NaiveDateTime,_>("updated_at"),
+            let passwords: Vec<Password> = rows.iter().map(|row| {
+                let encrypted: String = row.get("password_encrypted");
+                let decrypted = decrypt_password(&encrypted).unwrap_or("[decryption error]".to_string());
+                Password {
+                    password_id: row.get("password_id"),
+                    user_id: row.get("user_id"),
+                    domain: row.get("domain"),
+                    password_encrypted: decrypted,
+                    created_at: row.get::<NaiveDateTime,_>("created_at"),
+                    updated_at: row.get::<NaiveDateTime,_>("updated_at"),
+                }
             }).collect();
             HttpResponse::Ok().json(passwords)
         }
@@ -94,11 +104,13 @@ pub async fn get_password(pool: web::Data<SqlitePool>, path: web::Path<i64>) -> 
         .await
     {
         Ok(Some(row)) => {
+            let encrypted: String = row.get("password_encrypted");
+            let decrypted = decrypt_password(&encrypted).unwrap_or("[decryption error]".to_string());
             let password = Password {
                 password_id: row.get("password_id"),
                 user_id: row.get("user_id"),
                 domain: row.get("domain"),
-                password_encrypted: row.get("password_encrypted"),
+                password_encrypted: decrypted,
                 created_at: row.get::<NaiveDateTime,_>("created_at"),
                 updated_at: row.get::<NaiveDateTime,_>("updated_at"),
             };
@@ -119,6 +131,15 @@ pub async fn update_password(
     let id = path.into_inner();
     let now = Utc::now().naive_utc();
 
+    // הצפנה לפני עדכון
+    let encrypted = match &updated.password_encrypted {
+        Some(pwd) => match encrypt_password(pwd) {
+            Ok(enc) => Some(enc),
+            Err(e) => return HttpResponse::InternalServerError().body(format!("Encryption error: {}", e)),
+        },
+        None => None,
+    };
+
     match sqlx::query(
         "UPDATE passwords SET
             domain = COALESCE(?, domain),
@@ -127,7 +148,7 @@ pub async fn update_password(
          WHERE password_id = ?"
     )
     .bind(&updated.domain)
-    .bind(&updated.password_encrypted)
+    .bind(&encrypted)
     .bind(now)
     .bind(id)
     .execute(&**pool)

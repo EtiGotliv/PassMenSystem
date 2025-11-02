@@ -13,7 +13,7 @@ pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
         r#"
         CREATE TABLE categories (
         category_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        category_name TEXT NOT NULL 
+        category_name TEXT NOT NULL
         );
         "#,
     )
