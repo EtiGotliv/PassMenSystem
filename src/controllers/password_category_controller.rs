@@ -2,6 +2,32 @@ use actix_web::{post, delete, get, web, HttpResponse, Responder};
 use sqlx::SqlitePool;
 use crate::models::password_category::{PasswordCategory, CreatePasswordCategoryDto};
 use sqlx::Row;
+
+// ===================== INIT DATABASE =====================
+pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
+    // let database_url = "C:\\Users\\1\\Documents\\GitHub\\PassMenSystem\\src\\passwords_management_system.db";
+    let database_url = "sqlite://src/passwords_management_system.db";
+    let pool = SqlitePool::connect(database_url).await?;
+
+    println!("Creating password_category table if not exists...");
+    sqlx::query(
+        r#"
+        CREATE TABLE password_category (
+    password_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
+    PRIMARY KEY(password_id, category_id),
+    FOREIGN KEY(password_id) REFERENCES passwords(password_id) ON DELETE CASCADE,
+    FOREIGN KEY(category_id) REFERENCES categories(category_id) ON DELETE CASCADE
+            
+        );
+        "#,
+    )
+    .execute(&pool)
+    .await?;
+    println!("password_category table ready");
+    Ok(pool)
+}
+
 // ===================== CREATE =====================
 #[post("/password-category")]
 pub async fn create_password_category(
