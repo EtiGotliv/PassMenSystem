@@ -6,14 +6,18 @@ use crate::controllers::users_controller::{
     update_user,
     delete_user,
     login,
+    get_users_created_in_range,
 };
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
+        .service(get_users_created_in_range)
         .service(create_user)
         .service(get_users)
         .service(get_user)
         .service(update_user)
         .service(delete_user)
-        .service(login);
-}
+        .service(login)
+        ;
+
+    }

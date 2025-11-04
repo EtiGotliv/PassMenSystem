@@ -84,3 +84,44 @@ pub async fn get_all_password_categories(pool: web::Data<SqlitePool>) -> impl Re
         Err(e) => HttpResponse::InternalServerError().body(format!("Database error: {}", e)),
     }
 }
+#[derive(serde::Serialize)]
+pub struct UserShoppingInfo {
+    pub user_id: i64,
+    pub user_first_name: String,
+    pub user_last_name: String,
+    pub category_name: String,
+}
+#[get("/password_category/users_with_com")]
+pub async fn get_users_with_com_passwords(pool: web::Data<SqlitePool>) -> impl Responder {
+    // נגדיר query_result עם טיפוס מפורש
+    let query_result: Result<Vec<sqlx::sqlite::SqliteRow>, sqlx::Error> = sqlx::query(
+        r#"
+        SELECT DISTINCT 
+            u.user_id, 
+            u.user_first_name, 
+            u.user_last_name, 
+            c.category_name
+        FROM users u
+        JOIN passwords p ON u.user_id = p.user_id
+        JOIN password_category pc ON p.password_id = pc.password_id
+        JOIN categories c ON pc.category_id = c.category_id
+        WHERE c.category_name = '.com';
+        "#
+    )
+    .fetch_all(&**pool)
+    .await;
+
+    match query_result {
+        Ok(rows) => {
+            let result: Vec<UserShoppingInfo> = rows.iter().map(|row| UserShoppingInfo {
+                user_id: row.get("user_id"),
+                user_first_name: row.get("user_first_name"),
+                user_last_name: row.get("user_last_name"),
+                category_name: row.get("category_name"),
+            }).collect();
+
+            HttpResponse::Ok().json(result)
+        }
+        Err(e) => HttpResponse::InternalServerError().body(format!("Database error: {}", e)),
+    }
+}

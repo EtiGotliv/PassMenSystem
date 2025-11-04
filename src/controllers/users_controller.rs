@@ -230,3 +230,37 @@ pub async fn login(pool: web::Data<SqlitePool>, creds: web::Json<LoginRequest>) 
         Err(e) => HttpResponse::InternalServerError().body(format!("Hashing error: {}", e)),
     }
 }
+#[get("/users/created_in_range")]
+pub async fn get_users_created_in_range(pool: web::Data<SqlitePool>) -> impl Responder {
+    // מוסיפים טיפוס מפורש כדי למנוע שגיאת rows
+    let query_result: Result<Vec<sqlx::sqlite::SqliteRow>, sqlx::Error> = sqlx::query(
+        r#"
+        SELECT *
+        FROM users
+        WHERE strftime('%Y', created_at) BETWEEN '2022' AND '2024'
+        ORDER BY created_at ASC;
+        "#
+    )
+    .fetch_all(&**pool)
+    .await;
+
+    match query_result {
+        Ok(rows) => {
+            let users: Vec<User> = rows.iter().map(|row| User {
+                user_id: row.get("user_id"),
+                user_first_name: row.get("user_first_name"),
+                user_last_name: row.get("user_last_name"),
+                email: row.get("email"),
+                phone: row.get("phone"),
+                password_hash_to_login: row.get("password_hash_to_login"),
+                created_at: row.get("created_at"),
+                updated_at: row.get("updated_at"),
+                last_login: row.get("last_login"),
+                is_active: row.get("is_active"),
+            }).collect();
+
+            HttpResponse::Ok().json(users)
+        }
+        Err(e) => HttpResponse::InternalServerError().body(format!("Database error: {}", e)),
+    }
+}

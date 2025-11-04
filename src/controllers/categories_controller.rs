@@ -132,3 +132,35 @@ pub async fn delete_category(pool: web::Data<SqlitePool>, path: web::Path<i64>) 
         Err(e) => HttpResponse::InternalServerError().body(format!("Database error: {}", e)),
     }
 }
+#[derive(serde::Serialize)]
+pub struct CategorySearchResult {
+    pub category_id: i64,
+    pub category_name: String,
+}
+
+#[get("/categories/search/{keyword}")]
+pub async fn search_categories(pool: web::Data<SqlitePool>, path: web::Path<String>) -> impl Responder {
+    let keyword = path.into_inner();
+    let pattern = format!("%{}%", keyword);
+
+    // שמרנו על אותו סגנון כמו בשאר הפונקציות שלך:
+    let query_result: Result<Vec<sqlx::sqlite::SqliteRow>, sqlx::Error> = sqlx::query(
+        "SELECT * FROM categories WHERE category_name LIKE ?"
+    )
+    .bind(pattern)
+    .fetch_all(&**pool)
+    .await;
+
+    match query_result {
+        Ok(rows) => {
+            // נמפה ידנית לשדה שיכול להיות Serialized ל-JSON
+            let results: Vec<CategorySearchResult> = rows.iter().map(|row| CategorySearchResult {
+                category_id: row.get("category_id"),
+                category_name: row.get("category_name"),
+            }).collect();
+
+            HttpResponse::Ok().json(results)
+        }
+        Err(e) => HttpResponse::InternalServerError().body(format!("Database error: {}", e)),
+    }
+}

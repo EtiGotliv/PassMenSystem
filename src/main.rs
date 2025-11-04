@@ -11,13 +11,7 @@ use routes::user_routes;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // הגדרת מסלול לקובץ SQLite ישירות בקוד
-    // let database_url = "sqlite://passwords_management_system.db";
-    // let database_url = "C:\\Users\\1\\Documents\\GitHub\\PassMenSystem\\src\\passwords_management_system.db";
     let database_url = "sqlite://src/passwords_management_system.db";
-
-
-    
-    // יוצר חיבור מאגר עם מקסימום 5 חיבורים בו זמנית
     let pool = SqlitePoolOptions::new()
         .max_connections(5)
         .connect(&database_url)
@@ -34,8 +28,9 @@ async fn main() -> std::io::Result<()> {
             .configure(user_routes::config)
             .configure(routes::password_routes::config)
             .configure(routes::category_routes::config)
-            .configure(routes::password_category_routes::config)
-            .configure(routes::password_history_routes::config)
+        .configure(routes::password_category_routes::config)
+        .configure(routes::password_history_routes::config)
+
     })
     .bind(("127.0.0.1", 8080))?
     .run()
